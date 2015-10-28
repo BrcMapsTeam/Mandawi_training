@@ -12,6 +12,27 @@ window.col_header1 = [
     "Total Homes",
     "Homes Destroyed",
     "Homes Partially Destroyed"];
+
+/*window.col_header2 = [
+    "NFRI-Full-set",
+    "Tarpaulin",
+    "Blankets",
+    "ORS",
+    "Hygiene-kits",
+    "Aqua-Tab",
+    "Soap"];
+
+window.col_header3 = [    
+    "FA",
+    "CADRE/Rescue Team",
+    "NDRT",
+    "PSS",
+    "RFL/DBM",
+    "WASH",
+    "DDRT",
+    "Other",
+    "International Delegates/Volunteers",
+    "All"];*/
 	
 function listMax(header,data){
 	var temp = [];
@@ -35,21 +56,23 @@ function getMax(list,field){
 		};}
 };
 
-function getData(list,Region,field){
+function getData(list,pcode,field){
 	for(i in list){
 		var temp;
-		if(list[i]["Region"]==Region){
+		if(list[i]["Pcode"]==pcode){
 			if(list[i][field]){temp = list[i][field]}else{ temp = "-"}
 			return temp;
+		console.log(temp);
 		};}
 };
 
 var col_max = listMax(col_header1,popdata);
 
 var getStyle = function(feature){
-		var data = getData(popdata,feature.properties.NAM,field);
+		var data = getData(popdata,feature.properties.PCODE,field);
 		var max = getMax(col_max,field);
 	    if(data>max[1][4]){
+	    	
 	        return {color: color[4],fillColor: color[4],fillOpacity:0.5,opacity:0.7,weight:2};
 	    } else if(data>max[1][3]){
 	        return {color: color[3],fillColor: color[3],fillOpacity:0.5,opacity:0.7,weight:2};

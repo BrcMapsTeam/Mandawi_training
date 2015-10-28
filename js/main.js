@@ -2,7 +2,7 @@ function init(){
 	
 	window.popup_open = false;
 	
-    var base_1 = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png',{
+    var base_osm1 = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png',{
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
     	minZoom: 8});
 
@@ -25,7 +25,7 @@ function init(){
     var map1 = L.map('map1', {
         center: [7.92867, 122.82166],
         zoom: 9,
-        layers: [base_1, all_layers1[0]]
+        layers: [base_osm1,all_layers1[0]]
     });
 	
 	function getControl(list_names,list_layers){
@@ -62,7 +62,7 @@ function init(){
 			html = html +'<p><i style="background-color:' + color[4-i]+'"></i> '+labels[i]+'</p>';}
 		this._div.innerHTML = html;
 	};
-	
+
     map1.on('baselayerchange', function (eventLayer) {
           legends1.update1(eventLayer.name);
     });
@@ -75,8 +75,8 @@ function init(){
 
 
 function getOnEachFeature(feature, layer) {
-	layer.bindPopup("<b>" + feature.properties.NAM
-				+ "</b><br/>"+ field +": " + getData(popdata,feature.properties.NAM,field).toLocaleString());
+	layer.bindPopup("<b>" + feature.properties.NAM_INFO
+				+ "</b><br/>"+ field +": " + getData(popdata,feature.properties.PCODE,field).toLocaleString());
     layer.on({
         mouseover: onMouseOver,		
 		mouseout: onMouseOut,
@@ -88,19 +88,19 @@ function getOnEachFeature(feature, layer) {
 
 function zoomToFeature(e) {
 	var temp;
-	if(e.target.feature.properties.NAM == window.zoomed){
+	if(e.target.feature.properties.PCODE == window.zoomed){
 		temp = bounds;
 		window.zoomed = NaN;
 		}else{
 		temp = e.target.getBounds();
-		window.zoomed = e.target.feature.properties.NAM;}
+		window.zoomed = e.target.feature.properties.PCODE;}
 }		
 
 function onMouseOver(e) {
 	if(!popup_open){
-		document.getElementById("dmg_dis").innerHTML = "<b>" + e.target.feature.properties.NAM + "<b/>";
-		for(k=1;k<8;k++){
-			var temp_data1 = getData(popdata,e.target.feature.properties.NAM,col_header1[(k-1)]);
+		document.getElementById("dmg_dis").innerHTML = "<b>" + e.target.feature.properties.NAM_INFO + "<b/>";
+		for(k=1;k<10;k++){
+			var temp_data1 = getData(popdata,e.target.feature.properties.PCODE,col_header1[(k-1)]);
 			var temp_data2 = temp_data1 ? temp_data1 : 0;
 			var temp_id1 = "dmg_dis_"+k.toString();
 			var temp_id2 = "dmg_full_"+k.toString();
@@ -118,14 +118,24 @@ function onPopupOpen(e) {
 	console.log(temp_field);
 	console.log(col_header1);
 	console.log(col_header1.indexOf(temp_field) > -1);
+	/*if(col_header1.indexOf(temp_field) > -1){
+		map2.closePopup();
+		map3.closePopup();
+	}else if(col_header2.indexOf(temp_field) > -1){
+		map1.closePopup();
+		map3.closePopup();
+	}else{
+		map1.closePopup();
+		map2.closePopup();
+	}*/
 	onMouseOver(e);
 	window.popup_open = true;
 }
 
 function onMouseOut() {
 	if(!popup_open){	
-		document.getElementById("dmg_dis").innerHTML = "<b>NAM<b/>";
-		for(k=1;k<8;k++){
+		document.getElementById("dmg_dis").innerHTML = "<b>Region<b/>";
+		for(k=1;k<10;k++){
 			var temp_id1 = "dmg_dis_"+k.toString();
 			var temp_value = 0;
 			document.getElementById(temp_id1).innerHTML = "- <small>|</small> 00<small>%</small>" + 
@@ -144,7 +154,7 @@ var bounds = map1.getBounds();
 console.log(bounds);
 var zoomed = NaN;
 
-for(k=1;k<8;k++){
+for(k=1;k<10;k++){
 	document.getElementById("dmg_full_"+k).innerHTML = parseInt( col_max[k-1].sum ).toLocaleString() + 
 							"<div style='line-height:40%' class='styled1' align='right'><progress value='"+100+"' max='"+100+"'></progress></div></div>";
 	document.getElementById("dmg_dis_"+k).innerHTML = "- <small>|</small> 00<small>%</small>" + 
